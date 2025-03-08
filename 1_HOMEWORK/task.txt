@@ -1,0 +1,19 @@
+# Создать образ на основе базового слоя python (там будет ОС и интерпретатор Python).
+FROM cr.yandex/crpj0epnmbhmioirkplt/atlas_bot_base:1.0.10
+
+RUN poetry config virtualenvs.create false
+
+# Сделать директорию /prod рабочей директорией.
+WORKDIR /prod
+
+# Установить зависимости poetry
+COPY pyproject.toml ./
+RUN poetry install --without dev
+
+# Скопировать содержимое директории /app c локального компьютера в директорию /prod.
+COPY app ./app
+
+# Выполнить запуск консьюмера при старте контейнера.
+CMD ["python3", "-m", "app.consumer"]
+
+EXPOSE 5000
